@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Elegant Bank Transactions</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  :root {
+    --primary-color: #0a2342;
+    --secondary-color: #147881;
+    --accent-color: #3ddc97;
+    --background-gradient: linear-gradient(135deg, #0a2342 0%, #147881 100%);
+    --glass-bg: rgba(255, 255, 255, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.25);
+    --text-light: #e0eaff;
+    --text-dark: #0a2342;
+    --error-color: #ff4c60;
+    --success-color: #32d74b;
+    --font-family: 'Poppins', sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-family);
+    background: var(--background-gradient);
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  #container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(20, 120, 129, 0.5);
+    width: 100%;
+    max-width: 420px;
+    padding: 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h1 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    letter-spacing: 1.1px;
+    font-size: 1.8rem;
+  }
+
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  select {
+    background: transparent;
+    border: 2px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 0.85rem 1.2rem;
+    font-size: 1.1rem;
+    color: var(--text-light);
+    font-weight: 500;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  input::placeholder {
+    color: rgba(224, 234, 255, 0.7);
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 8px var(--accent-color);
+    background: rgba(255 255 255 / 0.1);
+  }
+
+  button,
+  #show-login-btn,
+  #show-register-btn,
+  .logout-btn,
+  .link-button {
+    font-family: var(--font-family);
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 14px;
+    cursor: pointer;
+    border: none;
+    padding: 0.85rem 1.2rem;
+    background: var(--accent-color);
+    color: var(--primary-color);
+    box-shadow: 0 6px 15px rgba(61, 220, 151, 0.5);
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.25s ease;
+    user-select: none;
+    width: 100%;
+  }
+
+  button:hover:not(:disabled),
+  #show-login-btn:hover,
+  #show-register-btn:hover,
+  .logout-btn:hover,
+  .link-button:hover {
+    background: #2ae9a4;
+    box-shadow: 0 8px 20px rgba(61, 220, 151, 0.8);
+    transform: translateY(-2px);
+    color: var(--primary-color);
+  }
+
+  button:disabled {
+    background: #4daea9a3;
+    cursor: not-allowed;
+    box-shadow: none;
+    color: #bcced5;
+  }
+
+  #message,
+  #pin-message,
+  #login-message,
+  #register-message,
+  #transaction-message {
+    margin-top: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    min-height: 1.5rem;
+    user-select: none;
+  }
+
+  .error {
+    color: var(--error-color);
+  }
+
+  .success {
+    color: var(--success-color);
+  }
+
+  .balance-display {
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-bottom: 1.8rem;
+    text-align: center;
+    color: var(--text-light);
+    letter-spacing: 0.5px;
+  }
+
+  .transaction-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
+  }
+
+  .transaction-group input {
+    flex-grow: 1;
+  }
+
+  .link-button {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+    margin-top: 0.7rem;
+    text-align: center;
+    box-shadow: none;
+    width: auto;
+    align-self: center;
+    transition: color 0.3s ease, transform 0.25s ease;
+  }
+
+  .link-button:hover {
+    color: #2ae9a4;
+    transform: translateY(-1.5px);
+  }
+
+  .logout-btn {
+    margin-top: 2rem;
+    color: var(--primary-color);
+    background: #ff5252;
+    box-shadow: 0 6px 14px rgba(255, 82, 82, 0.6);
+    transition: background-color 0.3s ease, transform 0.25s ease;
+  }
+
+  .logout-btn:hover {
+    background: #ff7979;
+    box-shadow: 0 8px 20px rgba(255, 82, 82, 0.9);
+    transform: translateY(-2px);
+    color: var(--text-light);
+  }
+
+  @media (max-width: 460px) {
+    #container {
+      padding: 2rem 2rem;
+      max-width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+  <div id="container">
+    <!-- Welcome Screen with Login and Registration choices -->
+    <div id="welcome-screen">
+      <h1>Welcome to Elegant Bank</h1>
+      <button id="show-login-btn" aria-label="Go to login screen">Login to Account</button>
+      <button id="show-register-btn" aria-label="Go to create account screen">Create New Account</button>
+    </div>
+
+    <!-- Registration Screen -->
+    <div id="register-screen" style="display:none;">
+      <h1>Create Account</h1>
+      <form id="register-form" aria-label="Create new bank account form">
+        <input type="text" id="register-username" placeholder="Account name" pattern="\\S+" autocomplete="off" required aria-required="true" aria-describedby="register-username-desc" />
+        <small id="register-username-desc" style="color: var(--accent-color); margin-top:-1rem; margin-bottom:1rem; display:block; font-weight: 400; font-size: 0.9rem;">No spaces allowed</small>
+        <input type="password" id="register-pin" maxlength="6" pattern="[0-9]{6}" placeholder="6-digit PIN" inputmode="numeric" autocomplete="off" required aria-required="true" />
+        <input type="password" id="register-pin-confirm" maxlength="6" pattern="[0-9]{6}" placeholder="Confirm PIN" inputmode="numeric" autocomplete="off" required aria-required="true" />
+        <button type="submit">Create Account</button>
+      </form>
+      <button class="link-button" id="to-welcome-from-register" aria-label="Back to welcome screen">Back to welcome</button>
+      <div id="register-message" role="alert" aria-live="polite"></div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" style="display:none;">
+      <h1>Account Login</h1>
+      <form id="login-form" aria-label="Account login form">
+        <input type="text" id="login-username" placeholder="Account name" autocomplete="off" required aria-required="true" />
+        <input type="password" id="login-pin" maxlength="6" pattern="[0-9]{6}" placeholder="PIN" inputmode="numeric" autocomplete="off" required aria-required="true" />
+        <button type="submit">Login</button>
+      </form>
+      <button class="link-button" id="to-welcome-from-login" aria-label="Back to welcome screen">Back to welcome</button>
+      <div id="login-message" role="alert" aria-live="polite"></div>
+    </div>
+
+    <!-- Transaction Screen -->
+    <div id="transaction-screen" style="display:none;">
+      <h1>Bank Transactions</h1>
+      <div class="balance-display" aria-live="polite" aria-atomic="true">Balance: <span id="balance-amount">0.00</span> USD</div>
+      <form id="transaction-form" aria-label="Bank transaction form">
+        <div class="transaction-group">
+          <input type="number" id="transaction-amount" min="1" placeholder="Amount in USD" required aria-required="true" />
+          <select id="transaction-type" aria-label="Select transaction type">
+            <option value="deposit">Deposit</option>
+            <option value="withdraw">Withdraw</option>
+          </select>
+        </div>
+        <button type="submit">Submit Transaction</button>
+      </form>
+      <div id="transaction-message" role="alert" aria-live="polite"></div>
+      <button class="logout-btn" id="logout-btn" aria-label="Logout and return to welcome screen">Logout</button>
+    </div>
+  </div>
+
+<script>
+  (function(){
+    const STORAGE_KEY = "bankAccounts";
+
+    const welcomeScreen = document.getElementById('welcome-screen');
+    const showLoginBtn = document.getElementById('show-login-btn');
+    const showRegisterBtn = document.getElementById('show-register-btn');
+
+    const registerScreen = document.getElementById('register-screen');
+    const registerForm = document.getElementById('register-form');
+    const registerUsername = document.getElementById('register-username');
+    const registerPin = document.getElementById('register-pin');
+    const registerPinConfirm = document.getElementById('register-pin-confirm');
+    const registerMessage = document.getElementById('register-message');
+    const toWelcomeFromRegisterBtn = document.getElementById('to-welcome-from-register');
+
+    const loginScreen = document.getElementById('login-screen');
+    const loginForm = document.getElementById('login-form');
+    const loginUsername = document.getElementById('login-username');
+    const loginPin = document.getElementById('login-pin');
+    const loginMessage = document.getElementById('login-message');
+    const toWelcomeFromLoginBtn = document.getElementById('to-welcome-from-login');
+
+    const transactionScreen = document.getElementById('transaction-screen');
+    const balanceAmount = document.getElementById('balance-amount');
+    const transactionForm = document.getElementById('transaction-form');
+    const transactionAmountInput = document.getElementById('transaction-amount');
+    const transactionTypeSelect = document.getElementById('transaction-type');
+    const transactionMessage = document.getElementById('transaction-message');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    let currentAccount = null;
+
+    function getAccounts(){
+      let data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : {};
+    }
+
+    function saveAccounts(accounts){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(accounts));
+    }
+
+    function clearMessages() {
+      registerMessage.textContent = "";
+      loginMessage.textContent = "";
+      transactionMessage.textContent = "";
+      registerMessage.className = "";
+      loginMessage.className = "";
+      transactionMessage.className = "";
+    }
+
+    function showWelcomeScreen(){
+      hideAllScreens();
+      welcomeScreen.style.display = "block";
+      clearMessages();
+    }
+
+    function showRegisterScreen(){
+      hideAllScreens();
+      registerScreen.style.display = "block";
+      registerForm.reset();
+      clearMessages();
+      registerUsername.focus();
+    }
+
+    function showLoginScreen(){
+      hideAllScreens();
+      loginScreen.style.display = "block";
+      loginForm.reset();
+      clearMessages();
+      loginUsername.focus();
+    }
+
+    function showTransactionScreen(){
+      hideAllScreens();
+      transactionScreen.style.display = "block";
+      updateBalanceDisplay();
+      clearMessages();
+      transactionAmountInput.value = "";
+      transactionAmountInput.focus();
+    }
+
+    function hideAllScreens(){
+      welcomeScreen.style.display = "none";
+      registerScreen.style.display = "none";
+      loginScreen.style.display = "none";
+      transactionScreen.style.display = "none";
+    }
+
+    function updateBalanceDisplay(){
+      if(currentAccount && typeof currentAccount.balance === "number"){
+        balanceAmount.textContent = currentAccount.balance.toFixed(2);
+      } else {
+        balanceAmount.textContent = "0.00";
+      }
+    }
+
+    showLoginBtn.addEventListener('click', () => {
+      showLoginScreen();
+    });
+
+    showRegisterBtn.addEventListener('click', () => {
+      showRegisterScreen();
+    });
+
+    toWelcomeFromRegisterBtn.addEventListener('click', () => {
+      showWelcomeScreen();
+    });
+
+    toWelcomeFromLoginBtn.addEventListener('click', () => {
+      showWelcomeScreen();
+    });
+
+    registerForm.addEventListener('submit', e => {
+      e.preventDefault();
+      clearMessages();
+
+      let username = registerUsername.value.trim();
+      let pin = registerPin.value.trim();
+      let pinConfirm = registerPinConfirm.value.trim();
+
+      if(username.length === 0 || pin.length === 0 || pinConfirm.length === 0){
+        registerMessage.textContent = "Please fill in all fields.";
+        registerMessage.className = "error";
+        return;
+      }
+
+      if(pin !== pinConfirm) {
+        registerMessage.textContent = "PIN and confirmation do not match.";
+        registerMessage.className = "error";
+        return;
+      }
+
+      if(pin.length !== 6 || !/^\d{6}$/.test(pin)) {
+        registerMessage.textContent = "PIN must be exactly 6 digits.";
+        registerMessage.className = "error";
+        return;
+      }
+
+      let accounts = getAccounts();
+      if(accounts.hasOwnProperty(username)){
+        registerMessage.textContent = "Account name already exists. Please choose another.";
+        registerMessage.className = "error";
+        return;
+      }
+
+      accounts[username] = {
+        pin: pin,
+        balance: 0
+      };
+      saveAccounts(accounts);
+
+      // Automatically log in the user after account creation
+      currentAccount = {...accounts[username], username};
+      showTransactionScreen();
+    });
+
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      clearMessages();
+
+      let username = loginUsername.value.trim();
+      let pin = loginPin.value.trim();
+
+      if(username.length === 0 || pin.length === 0){
+        loginMessage.textContent = "Please fill in all fields.";
+        loginMessage.className = "error";
+        return;
+      }
+
+      let accounts = getAccounts();
+      if(!accounts.hasOwnProperty(username)){
+        loginMessage.textContent = "Account not found.";
+        loginMessage.className = "error";
+        return;
+      }
+
+      if(accounts[username].pin !== pin){
+        loginMessage.textContent = "Incorrect PIN.";
+        loginMessage.className = "error";
+        return;
+      }
+
+      currentAccount = {...accounts[username], username};
+
+      showTransactionScreen();
+    });
+
+    transactionForm.addEventListener('submit', e => {
+      e.preventDefault();
+      clearMessages();
+
+      if(!currentAccount){
+        transactionMessage.textContent = "No account logged in.";
+        transactionMessage.className = "error";
+        return;
+      }
+
+      let amount = parseFloat(transactionAmountInput.value);
+      let type = transactionTypeSelect.value;
+
+      if(isNaN(amount) || amount <= 0) {
+        transactionMessage.textContent = "Please enter a valid amount greater than 0.";
+        transactionMessage.className = "error";
+        return;
+      }
+
+      let accounts = getAccounts();
+
+      if(type === "withdraw") {
+        if(amount > currentAccount.balance){
+          transactionMessage.textContent = "Insufficient funds for this withdrawal.";
+          transactionMessage.className = "error";
+          return;
+        }
+        currentAccount.balance -= amount;
+        transactionMessage.textContent = `Successfully withdrew $${amount.toFixed(2)}.`;
+        transactionMessage.className = "success";
+      } else {
+        currentAccount.balance += amount;
+        transactionMessage.textContent = `Successfully deposited $${amount.toFixed(2)}.`;
+        transactionMessage.className = "success";
+      }
+
+      accounts[currentAccount.username] = currentAccount;
+      saveAccounts(accounts);
+      
+      updateBalanceDisplay();
+      transactionAmountInput.value = "";
+      transactionAmountInput.focus();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      currentAccount = null;
+      showWelcomeScreen();
+    });
+
+    // Initialize on load
+    showWelcomeScreen();
+  })();
+</script>
+</body>
+</html>
+
